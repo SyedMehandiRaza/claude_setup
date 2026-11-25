@@ -7,6 +7,7 @@ A reusable Claude Code setup for a full-stack project: agents, rules, skills, a 
 | Path | What it is |
 | ---- | ---------- |
 | `CLAUDE.md` | Entry point Claude reads first: stack, workflow, non-negotiables, definition of done |
+| `SETUP.md` | Step-by-step setup for a new project, with the prompts to paste |
 | `.claude/agents/` | 6 agents: architect, db-architect, developer, integration-owner, qa-reviewer, ui-implementer |
 | `.claude/rules/` | 11 rule files: backend, database, documentation, frontend, general, git-workflow, parallel-work, planning, security, testing, validation |
 | `.claude/skills/` | Project skills (`/new-module`, `/db-design`, ...) and Matt Pocock skills (`/grill-me`, `/tdd`, `/to-tickets`, ...) |
@@ -21,11 +22,14 @@ A reusable Claude Code setup for a full-stack project: agents, rules, skills, a 
 
 ## Start a project
 
-1. Open this folder in VS Code and run `claude` here, so Claude loads this `CLAUDE.md` and `.claude/`.
-2. Fill in `docs/PROJECT.md` and the Purpose and Stack sections of `CLAUDE.md`. If the stack is different, update the matching rules and skills too.
-3. Run `git init` and make the first commit. Branches and worktrees need a repository.
-4. Create the `shared/` and `e2e/` workspaces with the code. The rules expect them.
-5. Start the first module with `/new-module <name>`.
+Follow [SETUP.md](SETUP.md). In short:
+
+1. In your project folder (git already initialized), clone this repo, then open the project folder in VS Code and tell Claude: `Help me set up my project. Follow claude_setup/SETUP.md, step 1.` Claude moves everything into the root and removes the clone's `.git`. Restart the chat.
+2. Foundation on `main`: workspaces, backend, frontend, shared, e2e, tooling and tests. Then create the `testing` branch.
+3. First module: `auth` (authentication + authorization), in its own worktree on `feature/auth` from `testing`.
+4. Design and review the database first (`db-architect` agent, `/db-design`, `/db-design-review`, `qa-reviewer`).
+5. Build auth one ticket at a time, never in parallel.
+6. Merge auth into `testing`. After that, other modules can run in parallel.
 
 ## Parallel modules
 

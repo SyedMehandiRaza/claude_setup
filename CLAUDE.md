@@ -4,9 +4,20 @@
 
 [Project name and one-line purpose: fill in from `docs/PROJECT.md`.] This file is the entry point for project-wide instructions. Read the relevant files under `.claude/rules/` and `docs/` before making substantial changes.
 
-## Stack (default, not yet confirmed for this project)
+## Project setup
 
-The rules and skills assume this stack. If the project uses something else, change this section, `docs/ARCHITECTURE.md` and the matching rules and skills first.
+- If the user says "help me set up my project" (or similar), or the project has no `package.json` yet, follow `SETUP.md`:
+  1. First show the **whole workflow step by step**: every step in `SETUP.md` (before you start, steps 1 to 6, the "Auth first" rule, the every-new-chat prompt), where each step is done (main folder or module folder), which agents and skills it uses, and what the developer sends back after it. Mark which steps are already done (from the checklist and the folder state).
+  2. Then start the next unticked step: give its prompt and instructions, do the work, and tick it when done. Stop after each step with its report.
+- Projects start with the `auth` module (authentication + authorization), in its own worktree from `testing` (`SETUP.md` steps 3 to 6). Its database is designed and reviewed first (`db-architect` agent, `/db-design`, `/db-design-review`, `qa-reviewer`), then it is built one ticket at a time, never in parallel. Other modules start only after `auth` is merged into `testing`; then they can run in parallel.
+
+## Stack (decided: do not ask the user which stack or libraries to use)
+
+The rules and skills assume this stack. Change it only if the user explicitly asks; then update this section, `docs/ARCHITECTURE.md`, `docs/DEPENDENCIES.md` and the matching rules and skills first.
+
+- Backend libraries: express (5), sequelize, mysql2, sequelize-cli, jsonwebtoken, bcryptjs, cookie-parser, cors, helmet, express-rate-limit, multer (file uploads), pino + pino-http, dotenv. Tests: jest, supertest, cross-env.
+- Frontend libraries: react, react-dom, vite, @vitejs/plugin-react, @reduxjs/toolkit, react-redux, react-router, react-hook-form, @hookform/resolvers. Tests: jest, jest-environment-jsdom, babel-jest, @testing-library/react, @testing-library/user-event, @testing-library/jest-dom, msw.
+- Shared: zod. E2E: @playwright/test. Root tooling: eslint, prettier, concurrently.
 
 - Language: JavaScript (ESM) everywhere, no TypeScript. npm workspaces: `shared/`, `backend/`, `frontend/`, `e2e/`.
 - Backend: Node.js + Express 5, Sequelize + MySQL, JWT access token (Bearer header) + refresh token (httpOnly cookie, rotated, stored hashed)
@@ -50,6 +61,8 @@ Run `/new-module <name>`. It drives each step in order and stops for approval be
 - Every field gets explicit validation (type, required/optional, length, format, range), and every rule has a message from `shared/`.
 - Database changes go through migrations only. Never use `sequelize.sync({ force/alter })` outside throwaway tests.
 - UI must match Figma exactly: use Figma variables/tokens and downloaded assets, and verify with a screenshot comparison.
+- Every validation error message is shown with the same text in the API response, the frontend form and on screen in the UI. Never ask whether to do this.
+- Every change has tests, and every module lists its test cases (what, how, expected, result) in `docs/execution/<module>/TEST-CASES.md`. Never ask whether to do this.
 
 ## General rules
 
@@ -64,7 +77,12 @@ Run `/new-module <name>`. It drives each step in order and stops for approval be
 
 ## Branches
 
-`feature/<module>` → `testing` → `main`. Claude pushes only feature branches. Merging into `testing`, and later from `testing` into `main`, happens only when the user asks. See `.claude/rules/git-workflow.md`.
+`agent/<module>/<task>` → `feature/<module>` → `testing` → `main`.
+
+- Each module has its own worktree folder `..\<project>-<module>` on `feature/<module>` and its own Claude session. It learns about other modules by reading git (`git fetch`, `git log`, `git show origin/feature/<other>:<path>`), never by editing their folders, and takes their code only from `testing`.
+- Inside a module, Claude splits the work into tasks (for example login, signup, onboarding, forgot password), runs each in a sub-agent with its own task worktree, merges it into `feature/<module>`, and removes that worktree itself when the task is done.
+- Claude pushes only feature branches. The user removes the module worktree when the module is done. Merging into `testing`, and from `testing` into `main` (merge or pull request), happens only when the user asks. Branches are never deleted.
+- Full steps: `.claude/rules/git-workflow.md` and `.claude/rules/parallel-work.md`.
 
 ## Parallel work
 

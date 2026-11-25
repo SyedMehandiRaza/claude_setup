@@ -16,7 +16,7 @@ docs/execution/
 
 1. Pick a prefix and add a row to both tables below.
 2. Create `docs/execution/<module>/` with `tickets/`, `questions/`, `decisions/` and `specs/`.
-3. Copy `_templates/module-README.md` to `<module>/README.md` and `_templates/STATUS.md` to `<module>/STATUS.md`.
+3. Copy `_templates/module-README.md` to `<module>/README.md`, `_templates/STATUS.md` to `<module>/STATUS.md` and `_templates/TEST-CASES.md` to `<module>/TEST-CASES.md`.
 
 `/new-module <name>` does this for you.
 
@@ -32,8 +32,11 @@ Each module has its own folder on disk (a git worktree on its own branch), its o
 Create a module folder from the main checkout:
 
 ```
-git worktree add -b feature/<module> ..\<project>-<module> main
+git fetch origin
+git worktree add -b feature/<module> ..\<project>-<module> origin/testing
 ```
+
+Branch from `testing` so the module starts with every finished module (use `main` if `testing` does not exist yet). The full lifecycle (start, stay in sync, task worktrees, finish, integrate) is in `.claude/rules/git-workflow.md`.
 
 Give each folder the next free row. Dev ports go up by 100 (web) and 10 (API); E2E web is dev web + 1; E2E API is 5100 plus the same step.
 

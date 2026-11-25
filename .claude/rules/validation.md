@@ -1,5 +1,7 @@
 # Validation Rules (Zod, shared by backend and frontend)
 
+This is a fixed rule for every form and every API: apply it without asking. Every validation error message must be visible in all three places, with the exact same text: the backend API response (`error.fields`), the frontend form validation, and on screen in the UI under the field it belongs to.
+
 ## One source of truth
 - All Zod schemas live in `shared/src/schemas/<module>.schema.js`.
 - All user-facing validation messages live in `shared/src/messages/<module>.messages.js` (plus `common.messages.js` for generic ones).

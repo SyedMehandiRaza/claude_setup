@@ -27,6 +27,17 @@
 - Worktrees do not isolate databases, external services, credentials, or arbitrary filesystem access. Module folders get their own databases and ports through `backend/.env` and `.env.worktree` (`docs/execution/README.md`).
 - Avoid multiple agents editing the same file concurrently.
 
+### Task worktrees inside a module
+A module session works faster by splitting the module into tasks and giving each task to a sub-agent in its own worktree. Do this by default once the module's contract is fixed (stage 4 of `/new-module`: spec, DB, shared schemas and API contract agreed).
+
+**Exception: the `auth` module (authentication + authorization) is never parallelized.** It is the first module, built one stage and one ticket at a time in its own module session, with no task worktrees and no parallel sub-agents (agents may still be used one at a time). No other module starts until `auth` is merged into `testing`. See `SETUP.md`, "Auth first".
+
+- **Split by user flow, one vertical slice per task.** Example for `auth`: `AUTH-002-login`, `AUTH-003-signup`, `AUTH-004-onboarding`, `AUTH-005-forgot-password`. Each task covers its own API endpoints, pages and tests.
+- **Sequential first, parallel after.** The module's migration, `shared/` schemas and messages, `routes/index.js`, `models/index.js` and the shared `components/ui` and tokens pass are done by the module session itself, before any sub-agent starts. Sub-agents never edit those files.
+- **Parallel only when independent.** Two tasks run at the same time only if they do not edit the same files. If one task depends on another (for example onboarding needs signup), start it after the first one is merged into `feature/<module>`.
+- **Right agent for the task:** `developer` for API and logic tasks, `ui-implementer` for one Figma page, `qa-reviewer` to review a finished task before merging.
+- **Merge each finished task into the module branch** from the module folder: review the diff, `git merge --no-ff agent/<module>/<TICKET-ID>-<slug>` into `feature/<module>`, run the tests, then remove the task worktree (see "Removing worktrees").
+
 ### Naming sub-agent worktrees
 A session that gives a ticket to a sub-agent in its own worktree names the branch and folder after the ticket, so anyone can tell what each one is doing:
 - Branch: `agent/<module>/<TICKET-ID>-<slug>`, for example `agent/orders/ORD-004-list-orders`.

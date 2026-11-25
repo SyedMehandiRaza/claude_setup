@@ -10,6 +10,11 @@
 - Avoid tests that depend on production systems or mutate shared data.
 - Use isolated test fixtures and clean up test data safely.
 
+## Written test cases (required)
+- Every module keeps `docs/execution/<module>/TEST-CASES.md` (from `docs/execution/_templates/TEST-CASES.md`): one row per test with what is tested, the type, how it was tested (input or steps), the expected result, the test file and the result with date.
+- Update it in the same commit as the tests. A ticket is not done until its test cases are listed there and its "Verification" section links them.
+- List what was not tested and why. Do not ask the user whether to write tests or test cases: always do it.
+
 ## Tools and locations
 - `shared/`: Jest unit tests for every Zod schema (valid case, each rule failing, exact message asserted).
 - `backend/`: Jest unit tests for services (DB mocked or test DB), and integration tests with `supertest` against `app.js` and a dedicated MySQL test database (`*_test`), migrated before the run and cleaned per test.

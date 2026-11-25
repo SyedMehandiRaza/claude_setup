@@ -24,6 +24,8 @@ Module folder: `docs/modules/<module>/`. If it does not exist, copy `docs/module
 ## Parallelism
 After stage 4 the contract is fixed. Backend tickets and frontend pages can then run in parallel (agents `developer` and `ui-implementer`, separate worktrees) because both depend only on `shared/` and the API contract. `shared/`, migrations and the route index stay with `integration-owner`. Do not parallelize stages 1 to 4.
 
+**Exception: `auth`.** The `auth` module (authentication + authorization) is always the first module and is never parallelized: run every stage and every ticket one at a time in this session, with no task worktrees and no parallel sub-agents. For stage 3 use the `db-architect` agent with `/db-design`, then `/db-design-review` and an independent `qa-reviewer` review, and also sketch the whole-project ERD in `docs/database/SCHEMA.md` (marked "planned"). Other modules start only after `auth` is merged into `testing`. Prompts: `SETUP.md` steps 4 and 5.
+
 ## Rules
 - Never skip stage 1 or 3 for a module that stores data.
 - Do not invent business rules; open questions go to `docs/execution/<module>/questions/` (one file each, from the template) and the board.

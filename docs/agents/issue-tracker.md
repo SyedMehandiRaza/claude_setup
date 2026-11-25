@@ -8,6 +8,7 @@ Tickets, questions, decisions and specs live as markdown files under `docs/execu
 docs/execution/<module>/
   README.md                     the module board: one line per ticket, open questions, decisions
   STATUS.md                     current state, next actions, blockers (short; history goes in the tickets)
+  TEST-CASES.md                 every test case: what, how, expected, result (see .claude/rules/testing.md)
   tickets/<PREFIX>-NNN-<slug>.md
   questions/<PREFIX>-Q-NNN-<slug>.md
   decisions/<PREFIX>-DEC-NNN-<slug>.md
