@@ -11,9 +11,9 @@
   2. Then start the next unticked step: give its prompt and instructions, do the work, and tick it when done. Stop after each step with its report.
 - Projects start with the `auth` module (authentication + authorization), in its own worktree from `testing` (`SETUP.md` steps 3 to 6). Its database is designed and reviewed first (`db-architect` agent, `/db-design`, `/db-design-review`, `qa-reviewer`), then it is built one ticket at a time, never in parallel. Other modules start only after `auth` is merged into `testing`; then they can run in parallel.
 
-## Stack (decided: do not ask the user which stack or libraries to use)
+## Stack (default: the developer confirms or changes it in SETUP.md step 2a)
 
-The rules and skills assume this stack. Change it only if the user explicitly asks; then update this section, `docs/ARCHITECTURE.md`, `docs/DEPENDENCIES.md` and the matching rules and skills first.
+This is the default stack the rules and skills assume. In `SETUP.md` step 2a, Claude asks the developer how they want the backend and frontend set up (every area and library, showing this default), then records the answers here (marked "confirmed for this project"), in `docs/ARCHITECTURE.md`, `docs/DEPENDENCIES.md` and `docs/DECISIONS.md`, and updates the matching rules and skills. Once confirmed, do not ask about the stack again; change it only if the user explicitly asks. Whatever the stack, the validation-parity and test-case rules below always apply.
 
 - Backend libraries: express (5), sequelize, mysql2, sequelize-cli, jsonwebtoken, bcryptjs, cookie-parser, cors, helmet, express-rate-limit, multer (file uploads), pino + pino-http, dotenv. Tests: jest, supertest, cross-env.
 - Frontend libraries: react, react-dom, vite, @vitejs/plugin-react, @reduxjs/toolkit, react-redux, react-router, react-hook-form, @hookform/resolvers. Tests: jest, jest-environment-jsdom, babel-jest, @testing-library/react, @testing-library/user-event, @testing-library/jest-dom, msw.

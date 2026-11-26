@@ -25,7 +25,7 @@ A reusable Claude Code setup for a full-stack project: agents, rules, skills, a 
 Follow [SETUP.md](SETUP.md). In short:
 
 1. In your project folder (git already initialized), clone this repo, then open the project folder in VS Code and tell Claude: `Help me set up my project. Follow claude_setup/SETUP.md, step 1.` Claude moves everything into the root and removes the clone's `.git`. Restart the chat.
-2. Foundation on `main`: workspaces, backend, frontend, shared, e2e, tooling and tests. Then create the `testing` branch.
+2. Claude asks the developer how they want the backend and frontend set up (stack and libraries), records it and updates the rules (step 2a). Then it builds the foundation on `main`: workspaces, backend, frontend, shared, e2e, tooling and tests. Then it creates the `testing` branch (step 2b).
 3. First module: `auth` (authentication + authorization), in its own worktree on `feature/auth` from `testing`.
 4. Design and review the database first (`db-architect` agent, `/db-design`, `/db-design-review`, `qa-reviewer`).
 5. Build auth one ticket at a time, never in parallel.

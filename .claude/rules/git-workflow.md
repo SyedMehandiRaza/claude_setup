@@ -22,7 +22,7 @@
 | `agent/<module>/<task>` | One sub-agent, one task. | `.claude/worktrees/<task>` inside the module worktree |
 
 ## Project foundation (once, before any module)
-The only work committed straight to `main` is the one-time foundation from `SETUP.md` step 2 (workspaces, backend, frontend, shared, e2e, tooling, tests), done in the main checkout. After it passes `npm run check`, push `main` and create `testing` from it: `git checkout -b testing && git push -u origin testing`. From then on every change reaches `main` only through `testing`.
+The only work committed straight to `main` is the one-time foundation from `SETUP.md` steps 2a and 2b (stack choice, then workspaces, backend, frontend, shared, e2e, tooling, tests), done in the main checkout. After it passes `npm run check`, push `main` and create `testing` from it: `git checkout -b testing && git push -u origin testing`. From then on every change reaches `main` only through `testing`.
 
 ## Module lifecycle
 

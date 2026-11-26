@@ -50,14 +50,42 @@ Do not commit yet. When done, give me a short report with:
 
 ---
 
-## Step 2: Set up the backend, frontend, shared and tests (in the main folder, on `main`)
+## Step 2a: Tell Claude your backend and frontend stack (main folder)
+
+Before anything is installed, Claude asks you how you want the backend and frontend set up: languages, frameworks, database, every library, testing tools. Answer each question, or say "default" to keep the default shown (the stack in `CLAUDE.md`). Claude records your answers and updates the rules and skills to match, so every later chat uses your stack.
+
+Paste this prompt in a new chat in your project root:
+
+```text
+Before setting up the project, ask me how I want the backend and frontend set up. Follow CLAUDE.md ("Stack") and .claude/rules/.
+
+1. Ask me in small batches (backend first, then frontend, then testing and tooling). For every question show the current default from CLAUDE.md so I can just say "default". Cover at least:
+   - Backend: language and runtime (and version), JavaScript or TypeScript, framework, database and version, ORM / query builder and migrations tool, authentication (JWT access + refresh, sessions, OAuth / social login), password hashing, validation library, file uploads and storage (local, S3, ...), email sending, logging, security middleware (helmet, CORS, rate limiting), caching / queues if any, API style (REST, GraphQL), API docs (Swagger / OpenAPI), env config, and any other library I want.
+   - Frontend: framework and build tool, JavaScript or TypeScript, routing, state management, data fetching, forms, validation (shared with the backend), styling / UI library (CSS, Tailwind, MUI, ...), icons, charts, date handling, i18n, and any other library I want.
+   - Testing and tooling: unit and integration test tools for backend and frontend, API test tool, E2E tool, linting and formatting, package manager and workspaces / monorepo layout, Node version, git hooks.
+   - Anything else: deployment target, Docker, CI, Figma for the UI (yes / no).
+2. Do not ask whether to validate every field with the same message in the API, the form and the UI, or whether to write tests and test cases: those are fixed rules for any stack. If I choose another validation or test library, apply the same rules with it.
+3. When I have answered, show me the final stack as one table (area, choice, default or changed) and wait for my OK.
+4. After my OK, record it:
+   - the Stack section of CLAUDE.md (mark it "confirmed for this project"), docs/ARCHITECTURE.md, docs/DEPENDENCIES.md (each library and why), and a DEC-001 entry in docs/DECISIONS.md;
+   - if anything differs from the default, update the matching rules (.claude/rules/backend.md, frontend.md, database.md, validation.md, testing.md) and skills (express-module, db-design, db-design-review, shared-validation, figma-to-module, jest-testing, playwright-e2e) so they use my stack, and step 2b of SETUP.md so its prompt installs my choices. List every file you changed.
+5. Do not install anything or commit yet. Tick step 2a in the SETUP.md checklist.
+
+Report: the final stack table, the files you changed, and anything that needs my decision.
+```
+
+Send the stack table to your lead.
+
+---
+
+## Step 2b: Set up the backend, frontend, shared and tests (in the main folder, on `main`)
 
 This is the foundation every module builds on. It is done once, in your project root (the main checkout), on the `main` branch. No feature code (no login, no pages) yet: only the skeleton, tooling and tests. Then the `testing` branch is created from it.
 
 Paste this prompt in a new chat in your project root:
 
 ```text
-Set up the project foundation, following CLAUDE.md, SETUP.md and every file in .claude/rules/. The stack and libraries below are decided: do not ask me which stack to use. Validation (Zod in shared/, the same message in the API response and in the UI) and testing (tests plus written test cases) are rules, not questions: just apply them.
+Set up the project foundation, following CLAUDE.md, SETUP.md and every file in .claude/rules/. Use the stack confirmed in step 2a (the Stack section of CLAUDE.md). The list below is the default stack: where step 2a chose something else, use the chosen equivalent and keep the same structure (shared validation, error shape, auth, tests). Do not ask me about the stack again. Validation (one shared schema, the same message in the API response, the form and the UI) and testing (tests plus written test cases) are rules, not questions: just apply them.
 
 Work in this folder (the main checkout) on the main branch. Check `git status` first.
 
@@ -98,7 +126,7 @@ Work in this folder (the main checkout) on the main branch. Check `git status` f
    git checkout -b testing && git push -u origin testing && git checkout main
    Ask me before pushing if the remote or branch looks wrong.
 
-9. Tick step 2 in the checklist at the bottom of SETUP.md (in the same commit as the foundation).
+9. Tick step 2b in the checklist at the bottom of SETUP.md (in the same commit as the foundation, together with the step 2a stack changes).
 
 Report: what you installed (with versions), the folder structure, commands and their results, test cases written (link to TEST-CASES.md), what you could not verify, and anything that needs my decision.
 ```
@@ -224,7 +252,8 @@ Before doing anything, read CLAUDE.md, SETUP.md, and all files in .claude/rules/
 Claude ticks these as each step is done.
 
 - [ ] Step 1: Claude setup moved into the project root, chat restarted, skills visible
-- [ ] Step 2: foundation on `main` (shared, backend, frontend, e2e, tests), `testing` branch created
+- [ ] Step 2a: backend and frontend stack chosen by the developer, recorded, rules and skills updated
+- [ ] Step 2b: foundation on `main` (shared, backend, frontend, e2e, tests), `testing` branch created
 - [ ] Step 3: `feature/auth` worktree created from `testing`
 - [ ] Step 4: whole-project ERD and auth database designed, reviewed (db-architect + qa-reviewer) and migrations tested
 - [ ] Step 5: authentication and authorization built and reviewed, one ticket at a time
